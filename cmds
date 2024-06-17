@@ -1,3 +1,7 @@
 npx expo install @react-navigation/native @react-navigation/stack react-native-paper react-native-screens react-native-safe-area-context
 
 npm i @react-native-community/datetimepicker
+
+
+for backend
+npm install express mongoose dotenv cors
