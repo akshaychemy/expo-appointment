@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, Button, TextInput, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useAuth } from '../context/AuthContext';
@@ -9,7 +9,7 @@ const timeSlots = [
 ];
 
 export default function AppointmentScreen({ route, navigation }) {
-  const { clinic, doctor } = route.params;
+  const { clinic, selectedService, selectedDoctor } = route.params;
   const { user } = useAuth();
   const [name, setName] = useState('');
   const [date, setDate] = useState(new Date());
@@ -48,7 +48,15 @@ export default function AppointmentScreen({ route, navigation }) {
     }
 
     if (name && dateSelected && selectedTimeSlot) {
-      alert(`Appointment confirmed for ${name} with ${doctor} at ${clinic} on ${date.toDateString()} at ${selectedTimeSlot}`);
+      const appointmentDetails = {
+        name,
+        clinic: clinic.name,
+        selectedService,
+        selectedDoctor: selectedDoctor.name,
+        date: date.toDateString(),
+        timeSlot: selectedTimeSlot
+      };
+      alert(`Appointment confirmed for ${appointmentDetails.name} with Dr. ${appointmentDetails.selectedDoctor} at ${appointmentDetails.clinic} for ${appointmentDetails.selectedService} on ${appointmentDetails.date} at ${appointmentDetails.timeSlot}`);
       navigation.goBack();
     } else {
       alert('Please enter your name, select a date, and choose a time slot.');
@@ -57,8 +65,9 @@ export default function AppointmentScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text>Clinic: {clinic}</Text>
-      <Text>Doctor: {doctor}</Text>
+      <Text>Clinic: {clinic.name}</Text>
+      <Text>Service: {selectedService}</Text>
+      <Text>Doctor: {selectedDoctor.name}</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter your name"
