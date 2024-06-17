@@ -1,70 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, Button, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import necessary functions from React Navigation
+import { getClinics ,getDoctors} from '../src/api';
 
-// Sample data for services and doctors
-const services = {
-  'Clinic A': [
-    'Service A1',
-    'Service A2',
-    'Service A3',
-  ],
-  'Clinic B': [
-    'Service B1',
-    'Service B2',
-    'Service B3',
-  ],
-  'Clinic C': [
-    'Service C1',
-    'Service C2',
-    'Service C3',
-  ],
-};
 
-const doctors = {
-  'Clinic A': [
-    { id: 1, name: 'Dr. Smith', image: 'https://picsum.photos/200/300', description: 'Description for Dr. Smith' },
-    { id: 2, name: 'Dr. Johnson', image: 'https://picsum.photos/200/300', description: 'Description for Dr. Johnson' },
-  ],
-  'Clinic B': [
-    { id: 3, name: 'Dr. Williams', image: 'https://picsum.photos/200/300', description: 'Description for Dr. Williams' },
-    { id: 4, name: 'Dr. Brown', image: 'https://picsum.photos/200/300', description: 'Description for Dr. Brown' },
-  ],
-  'Clinic C': [
-    { id: 5, name: 'Dr. Jones', image: 'https://picsum.photos/200/300', description: 'Description for Dr. Jones' },
-    { id: 6, name: 'Dr. Davis', image: 'https://picsum.photos/200/300', description: 'Description for Dr. Davis' },
-  ],
-};
-
-export default function ClinicDetails({ route }) {
+export default function ClinicDetails({ route, navigation }) {
   const { clinic } = route.params;
   const [selectedService, setSelectedService] = useState(null);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
-  const navigation = useNavigation(); // Hook into navigation
+  const [doctors, setDoctors] = useState([]);
 
-  // Function to handle service selection
+  useEffect(() => {
+    fetchDoctors();
+  }, []);
+
+  const fetchDoctors = async () => {
+    try {
+      const data = await getDoctors();
+      const filteredDoctors = data.filter(doctor => doctor.clinic._id === clinic._id);
+      setDoctors(filteredDoctors);
+    } catch (error) {
+      console.error('Error fetching doctors:', error);
+    }
+  };
+
   const toggleService = (service) => {
     if (selectedService === service) {
       setSelectedService(null);
-      setSelectedDoctor(null); // Reset doctor selection if service is deselected
+      setSelectedDoctor(null);
     } else {
       setSelectedService(service);
     }
   };
 
-  // Function to handle doctor selection
   const selectDoctor = (doctor) => {
     setSelectedDoctor(doctor);
   };
 
-  // Function to handle appointment booking confirmation
   const handleAppointmentConfirmation = () => {
     if (selectedService && selectedDoctor) {
-      // Navigate to AppointmentScreen and pass necessary params
       navigation.navigate('Appointment', {
-        clinic: clinic,
-        selectedService: selectedService,
-        selectedDoctor: selectedDoctor,
+        clinic,
+        selectedService,
+        selectedDoctor,
       });
     } else {
       Alert.alert('Error', 'Please select both a service and a doctor to proceed.');
@@ -80,7 +57,7 @@ export default function ClinicDetails({ route }) {
 
       <Text style={styles.sectionTitle}>Services Offered</Text>
       <View style={styles.servicesContainer}>
-        {services[clinic.name].map((service, index) => (
+        {clinic.services.map((service, index) => (
           <TouchableOpacity
             key={index}
             style={[
@@ -98,13 +75,12 @@ export default function ClinicDetails({ route }) {
         <>
           <Text style={styles.sectionTitle}>Select Doctor</Text>
           <View style={styles.doctorContainer}>
-            {doctors[clinic.name].map((doctor, index) => (
+            {doctors.map(doctor => (
               <TouchableOpacity
-                key={doctor.id}
+                key={doctor._id}
                 style={[
                   styles.item,
                   selectedDoctor === doctor && styles.selectedItem,
-                  index % 2 !== 0 && { marginLeft: 10 }, // Ensure two items per row
                 ]}
                 onPress={() => selectDoctor(doctor)}
               >
@@ -154,12 +130,13 @@ const styles = StyleSheet.create({
   item: {
     alignItems: 'center',
     padding: 20,
-    marginVertical: 10,
+    margin: 10,
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 10,
     backgroundColor: 'white',
-    width: '45%', // Two items per row
+    minWidth: 150,
+    maxWidth: '45%',
   },
   selectedItem: {
     backgroundColor: 'lightblue',
@@ -191,3 +168,4 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
+

@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, Button, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, Button, TextInput, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useAuth } from '../context/AuthContext';
+// import { bookAppointment } from './api'; // Import the API call
+import { getClinics ,getDoctors,bookAppointment} from '../src/api';
 
-const timeSlots = [
-  '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
-  '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM'
-];
 
 export default function AppointmentScreen({ route, navigation }) {
   const { clinic, selectedService, selectedDoctor } = route.params;
-  const { user } = useAuth();
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [date, setDate] = useState(new Date());
@@ -18,6 +14,11 @@ export default function AppointmentScreen({ route, navigation }) {
   const [show, setShow] = useState(false);
   const [dateSelected, setDateSelected] = useState(false);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
+
+  const timeSlots = [
+    '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
+    '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM'
+  ];
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -41,92 +42,69 @@ export default function AppointmentScreen({ route, navigation }) {
     showMode('time');
   };
 
-  const handleConfirmAppointment = () => {
-    if (!user) {
-      alert('Please log in to confirm your appointment.');
-      navigation.navigate('Login');
+  const handleConfirmAppointment = async () => {
+    if (!name || !phoneNumber || !dateSelected || !selectedTimeSlot) {
+      alert('Please enter your name, phone number, select a date, and choose a time slot.');
       return;
     }
 
-    if (!name.trim() || !phoneNumber.trim()) {
-      alert('Please enter your name and phone number to proceed.');
-      return;
-    }
+    const appointmentData = {
+      name,
+      phoneNumber,
+      clinic: clinic.name,
+      selectedService,
+      selectedDoctor: selectedDoctor.name,
+      date: date.toDateString(),
+      timeSlot: selectedTimeSlot
+    };
 
-    if (!validatePhoneNumber(phoneNumber)) {
-      alert('Please enter a valid phone number.');
-      return;
-    }
-
-    if (dateSelected && selectedTimeSlot) {
-      const appointmentDetails = {
-        name,
-        phoneNumber,
-        clinic: clinic.name,
-        selectedService,
-        selectedDoctor: selectedDoctor.name,
-        date: date.toDateString(),
-        timeSlot: selectedTimeSlot
-      };
-      alert(`Appointment confirmed for ${appointmentDetails.name} with Dr. ${appointmentDetails.selectedDoctor} at ${appointmentDetails.clinic} for ${appointmentDetails.selectedService} on ${appointmentDetails.date} at ${appointmentDetails.timeSlot}. Contact: ${appointmentDetails.phoneNumber}`);
+    try {
+      await bookAppointment(appointmentData);
+      alert(`Appointment confirmed for ${name} with Dr. ${selectedDoctor.name} at ${clinic.name} for ${selectedService} on ${date.toDateString()} at ${selectedTimeSlot}`);
       navigation.goBack();
-    } else {
-      alert('Please select a date and choose a time slot.');
+    } catch (error) {
+      console.error('Error booking appointment:', error);
+      alert('Failed to book appointment. Please try again.');
     }
-  };
-
-  const validatePhoneNumber = (phoneNumber) => {
-    // Simple phone number validation: check if it's numeric and 10 digits long
-    return /^\d{10}$/.test(phoneNumber);
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.headerText}>Appointment Details</Text>
-      <View style={styles.detailContainer}>
-        <Text style={styles.detailText}>Clinic: {clinic.name}</Text>
-        <Text style={styles.detailText}>Service: {selectedService}</Text>
-        <Text style={styles.detailText}>Doctor: {selectedDoctor.name}</Text>
-      </View>
-      
+      <Text>Clinic: {clinic.name}</Text>
+      <Text>Service: {selectedService}</Text>
+      <Text>Doctor: {selectedDoctor.name}</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter your name"
         value={name}
         onChangeText={setName}
       />
-      
       <TextInput
         style={styles.input}
         placeholder="Enter your phone number"
-        keyboardType="phone-pad"
         value={phoneNumber}
         onChangeText={setPhoneNumber}
       />
-      
-      <View style={styles.dateTimeContainer}>
-        <View style={styles.dateTimeButton}>
-          <Button onPress={showDatepicker} title="Select date" />
-        </View>
-        {show && (
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={date}
-            mode={mode}
-            is24Hour={true}
-            display="default"
-            onChange={onChange}
-          />
-        )}
+      <View>
+        <Button onPress={showDatepicker} title="Select date" />
       </View>
-      
+      {show && (
+        <DateTimePicker
+          testID="dateTimePicker"
+          value={date}
+          mode={mode}
+          is24Hour={true}
+          display="default"
+          onChange={onChange}
+        />
+      )}
       {dateSelected && (
         <>
           <Text style={styles.title}>Select Time Slot</Text>
-          <View style={styles.timeSlotsContainer}>
-            {timeSlots.map(slot => (
+          <View style={styles.timeSlotContainer}>
+            {timeSlots.map((slot, index) => (
               <TouchableOpacity
-                key={slot}
+                key={index}
                 style={[styles.slot, selectedTimeSlot === slot && styles.selectedSlot]}
                 onPress={() => setSelectedTimeSlot(slot)}
               >
@@ -136,19 +114,12 @@ export default function AppointmentScreen({ route, navigation }) {
           </View>
         </>
       )}
-      
-      <View style={styles.dateTimeContainer}>
-        <Text style={styles.dateTimeText}>Selected Date: {date.toDateString()}</Text>
-        <Text style={styles.dateTimeText}>Selected Time: {selectedTimeSlot}</Text>
-      </View>
-      
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Confirm Appointment"
-          onPress={handleConfirmAppointment}
-          disabled={!name || !phoneNumber || !dateSelected || !selectedTimeSlot}
-        />
-      </View>
+      <Text>Selected Date: {date.toDateString()}</Text>
+      <Text>Selected Time: {selectedTimeSlot}</Text>
+      <Button
+        title="Confirm Appointment"
+        onPress={handleConfirmAppointment}
+      />
     </ScrollView>
   );
 }
@@ -156,78 +127,38 @@ export default function AppointmentScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  detailContainer: {
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    borderRadius: 5,
-  },
-  detailText: {
-    fontSize: 16,
-    marginBottom: 5,
+    padding: 20,
   },
   input: {
     height: 40,
-    borderColor: '#ccc',
+    borderColor: 'gray',
     borderWidth: 1,
     marginBottom: 20,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-  },
-  dateTimeContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  dateTimeButton: {
-    flex: 1,
-    marginRight: 10,
-  },
-  dateTimeText: {
-    fontSize: 16,
-    marginBottom: 10,
+    padding: 10,
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 24,
+    marginVertical: 10,
     textAlign: 'center',
-    marginBottom: 10,
   },
-  timeSlotsContainer: {
+  timeSlotContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
   },
   slot: {
-    paddingVertical: 12, // Adjusted padding for better touch area
-    paddingHorizontal: 20,
+    padding: 15,
     margin: 5,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: 'gray',
     borderRadius: 5,
     alignItems: 'center',
     backgroundColor: 'white',
-    width: '45%', // Adjusted width for two items per row
   },
   selectedSlot: {
-    backgroundColor: 'blue',
+    backgroundColor: 'lightblue',
   },
   slotText: {
-    fontSize: 16,
-  },
-  buttonContainer: {
-    marginTop: 20,
+    color: 'black',
   },
 });

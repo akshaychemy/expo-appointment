@@ -4,4 +4,8 @@ npm i @react-native-community/datetimepicker
 
 
 for backend
-npm install express mongoose dotenv cors
+npm install express mongoose dotenv cors 
+
+admin
+npm install @mui/material @emotion/react @emotion/styled axios react-router-dom
+
