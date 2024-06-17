@@ -1,25 +1,24 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, Button, TextInput, StyleSheet } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 
 export default function LoginScreen({ navigation }) {
+  const { login } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
 
   const handleLogin = () => {
-    // In a real app, you should validate the username and password
+    // Simulate a login process
     if (username && password) {
-      login(username);
-      navigation.replace('Appointment');
+      login({ username });
+      navigation.navigate('Home');
     } else {
-      alert('Please enter your username and password');
+      alert('Please enter username and password.');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
         placeholder="Username"
@@ -29,9 +28,9 @@ export default function LoginScreen({ navigation }) {
       <TextInput
         style={styles.input}
         placeholder="Password"
-        secureTextEntry
         value={password}
         onChangeText={setPassword}
+        secureTextEntry
       />
       <Button title="Login" onPress={handleLogin} />
     </View>
@@ -43,11 +42,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-    textAlign: 'center',
   },
   input: {
     height: 40,

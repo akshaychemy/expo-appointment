@@ -18,12 +18,6 @@ export default function AppointmentScreen({ route, navigation }) {
   const [dateSelected, setDateSelected] = useState(false);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
 
-//   useEffect(() => {
-//     if (!user) {
-//       navigation.replace('Login');
-//     }
-//   }, [user, navigation]);
-
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(false);
@@ -47,6 +41,12 @@ export default function AppointmentScreen({ route, navigation }) {
   };
 
   const handleConfirmAppointment = () => {
+    if (!user) {
+      alert('Please log in to confirm your appointment.');
+      navigation.navigate('Login');
+      return;
+    }
+
     if (name && dateSelected && selectedTimeSlot) {
       alert(`Appointment confirmed for ${name} with ${doctor} at ${clinic} on ${date.toDateString()} at ${selectedTimeSlot}`);
       navigation.goBack();
