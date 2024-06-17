@@ -9,6 +9,7 @@ const ClinicsPage = () => {
   const [clinicName, setClinicName] = useState('');
   const [clinicImage, setClinicImage] = useState(null); // State to store image file
   const [clinicDescription, setClinicDescription] = useState('');
+  const [clinicServices, setClinicServices] = useState(''); // State to store services
 
   useEffect(() => {
     const fetchClinics = async () => {
@@ -38,6 +39,7 @@ const ClinicsPage = () => {
       formData.append('name', clinicName);
       formData.append('description', clinicDescription);
       formData.append('image', clinicImage); // Append image file to FormData
+      formData.append('services', clinicServices); // Append services to FormData
 
       const response = await axios.post(
         'http://localhost:5000/api/clinics',
@@ -54,6 +56,7 @@ const ClinicsPage = () => {
       setClinicName('');
       setClinicImage(null);
       setClinicDescription('');
+      setClinicServices(''); // Reset services field
     } catch (error) {
       console.error('Failed to add clinic:', error);
     }
@@ -78,6 +81,13 @@ const ClinicsPage = () => {
           rows={4}
           style={{ margin: '10px 0' }}
         />
+        <TextField
+          label="Services (comma separated)"
+          value={clinicServices}
+          onChange={(e) => setClinicServices(e.target.value)}
+          required
+          style={{ margin: '10px 0' }}
+        />
         <input
           type="file"
           accept="image/*"
@@ -91,8 +101,9 @@ const ClinicsPage = () => {
           <li key={clinic._id}>
             <div>{clinic.name}</div>
             <div>{clinic.description}</div>
+            <div>{clinic.services.join(', ')}</div> {/* Display services */}
             <div>
-              <img src={`http://localhost:5000/uploads/ ${clinic.image}`} alt={clinic.name} style={{ maxWidth: '200px' }} />
+              <img src={`http://localhost:5000/uploads/${clinic.image}`} alt={clinic.name} style={{ maxWidth: '200px' }} />
             </div>
           </li>
         ))}

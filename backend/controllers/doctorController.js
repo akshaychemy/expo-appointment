@@ -1,6 +1,7 @@
 import Doctor from '../models/Doctor.js';
 import upload from '../middleware/fileUpload.js';
 import multer from 'multer';
+import path from 'path';
 
 export const getDoctors = async (req, res) => {
   try {
@@ -23,10 +24,12 @@ export const createDoctor = async (req, res) => {
 
       const { name, description, clinic } = req.body;
       const imagePath = req.file.path; // Path to uploaded image file
+      const filename = path.basename(imagePath);
+      console.log("imagePath", filename);
 
       const newDoctor = new Doctor({
         name,
-        image: imagePath, // Store file path in 'image' field
+        image: filename, // Store file path in 'image' field
         description,
         clinic // Assuming clinic is provided as ObjectId
       });

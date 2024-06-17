@@ -16,6 +16,7 @@ export default function ClinicDetails({ route, navigation }) {
   const fetchDoctors = async () => {
     try {
       const data = await getDoctors();
+       console.log("data==",data)
       const filteredDoctors = data.filter(doctor => doctor.clinic._id === clinic._id);
       setDoctors(filteredDoctors);
     } catch (error) {
@@ -51,7 +52,7 @@ export default function ClinicDetails({ route, navigation }) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.clinicHeader}>
-        <Image source={{ uri: clinic.image }} style={styles.image} />
+        <Image source={{ uri: `http://10.0.2.2:5000/uploads/${clinic.image}` }} style={styles.image} />
         <Text style={styles.title}>{clinic.name}</Text>
       </View>
 
@@ -84,7 +85,7 @@ export default function ClinicDetails({ route, navigation }) {
                 ]}
                 onPress={() => selectDoctor(doctor)}
               >
-                <Image source={{ uri: doctor.image }} style={styles.image} />
+                <Image source={{ uri: `http://10.0.2.2:5000/uploads/${doctor.image}` }} style={styles.image} />
                 <Text style={styles.itemText}>{doctor.name}</Text>
               </TouchableOpacity>
             ))}

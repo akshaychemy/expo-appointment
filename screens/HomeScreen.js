@@ -14,7 +14,6 @@ export default function HomeScreen({ navigation }) {
     try {
       const data = await getClinics();
       setClinics(data);
-      console.log("setClinics",data)
     } catch (error) {
       console.error('Error fetching clinics:', error);
     }
@@ -30,7 +29,7 @@ export default function HomeScreen({ navigation }) {
             style={styles.item}
             onPress={() => navigation.navigate('ClinicDetails', { clinic })}
           >
-            <Image source={{ uri: clinic.image }} style={styles.image} />
+            <Image source={{ uri: `http://10.0.2.2:5000/uploads/${clinic.image}` }} style={styles.image} />
             <Text style={styles.itemText}>{clinic.name}</Text>
           </TouchableOpacity>
         ))}
@@ -41,33 +40,37 @@ export default function HomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     padding: 20,
+    backgroundColor: '#f5f5f5',
   },
   title: {
     fontSize: 24,
     textAlign: 'center',
     marginVertical: 10,
+    fontWeight: 'bold',
+    color: '#333',
   },
   clinicContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
   },
   item: {
     alignItems: 'center',
-    padding: 20,
-    margin: 10,
+    padding: 15,
+    marginVertical: 10,
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 10,
     backgroundColor: 'white',
-    minWidth: 150,
-    maxWidth: '45%',
+    width: '48%', // Adjust the width to fit two items per row with space between
   },
   itemText: {
     marginTop: 10,
     textAlign: 'center',
+    fontSize: 16,
+    color: '#333',
   },
   image: {
     width: 100,

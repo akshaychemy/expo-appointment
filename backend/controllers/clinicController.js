@@ -24,15 +24,19 @@ const createClinic = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error', error: err.message });
       }
 
-      const { name, description } = req.body;
+      const { name, description, services } = req.body;
       const imagePath = req.file.path; // Path to uploaded image file
       const filename = path.basename(imagePath);
-      console.log("imagePath",filename)
+      console.log("imagePath", filename);
+
+      // Convert services from comma-separated string to array and remove any empty elements
+      const servicesArray = services.split(',').map(service => service.trim()).filter(service => service);
 
       const newClinic = new Clinic({
         name,
         image: filename, // Store file path in 'image' field
         description,
+        services: servicesArray, // Store services as an array
       });
 
       await newClinic.save();
@@ -43,6 +47,7 @@ const createClinic = async (req, res) => {
     res.status(500).json({ message: 'Error creating clinic', error: error.message });
   }
 };
+
 
 export { createClinic };
 

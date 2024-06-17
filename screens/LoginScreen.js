@@ -13,7 +13,7 @@ export default function LoginScreen({ navigation }) {
     try {
       console.log("===>")
       if (username && password) {
-        const response = await axios.post('http://localhost:5000/api/login', {
+        const response = await axios.post('http://10.0.2.2:5000/api/login', {
           username,
           password,
         });

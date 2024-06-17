@@ -51,14 +51,15 @@ export default function AppointmentScreen({ route, navigation }) {
     const appointmentData = {
       name,
       phoneNumber,
-      clinic: clinic.name,
+      clinic: clinic._id,
       selectedService,
-      selectedDoctor: selectedDoctor.name,
+      selectedDoctor: selectedDoctor._id,
       date: date.toDateString(),
       timeSlot: selectedTimeSlot
     };
 
     try {
+      console.log("appointmentData",appointmentData)
       await bookAppointment(appointmentData);
       alert(`Appointment confirmed for ${name} with Dr. ${selectedDoctor.name} at ${clinic.name} for ${selectedService} on ${date.toDateString()} at ${selectedTimeSlot}`);
       navigation.goBack();

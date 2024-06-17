@@ -11,7 +11,6 @@ export const getClinics = async () => {
     //     Authorization: `Bearer ${token}`,
     //   },
     });
-    console.log("-->",response)
     return response.data;
   } catch (error) {
     console.error('Error fetching clinics:', error);
@@ -38,9 +37,9 @@ export const bookAppointment = async (appointmentData) => {
   try {
     const token = await AsyncStorage.getItem('token'); // Retrieve token from AsyncStorage
     const response = await axios.post(`${API_BASE_URL}/appointments`, appointmentData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    //   headers: {
+    //     Authorization: `Bearer ${token}`,
+    //   },
     });
     return response.data;
   } catch (error) {

@@ -12,6 +12,7 @@ const HomePage = () => {
             Authorization: `Bearer ${localStorage.getItem('token')}`, // Assuming you have authentication
           },
         });
+        console.log(response.data);
         setAppointments(response.data); // Assuming response.data is an array of appointments
       } catch (error) {
         console.error('Failed to fetch appointments:', error);
@@ -27,10 +28,13 @@ const HomePage = () => {
       <ul>
         {appointments.map((appointment) => (
           <li key={appointment._id}>
-            <h3>{appointment.title}</h3>
+            <h3>{appointment.clinic.name}</h3>
+            <img src={`http://localhost:5000/uploads/${appointment.clinic.image}`}/>
             <p>Date: {appointment.date}</p>
-            <p>Time: {appointment.time}</p>
-            <p>Doctor: {appointment.doctor.name}</p>
+            <p>timeSlot: {appointment.timeSlot}</p>
+            <img src={`http://localhost:5000/uploads/${appointment.selectedDoctor.image}`}/>
+            <p>Doctor: {appointment?.selectedDoctor?.name}</p>
+            <p>services:{appointment?.selectedService}</p>
             {/* Additional fields as per your appointment schema */}
           </li>
         ))}
