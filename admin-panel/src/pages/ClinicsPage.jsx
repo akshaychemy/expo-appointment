@@ -63,14 +63,15 @@ const ClinicsPage = () => {
   };
 
   return (
-    <div>
-      <Typography variant="h4">Clinics</Typography>
+    <div className="container">
+      <Typography variant="h4" className="title">Clinics</Typography>
       <form onSubmit={(e) => e.preventDefault()}>
         <TextField
           label="Clinic Name"
           value={clinicName}
           onChange={(e) => setClinicName(e.target.value)}
           required
+          className="inputField"
         />
         <TextField
           label="Description"
@@ -79,35 +80,107 @@ const ClinicsPage = () => {
           required
           multiline
           rows={4}
-          style={{ margin: '10px 0' }}
+          className="inputField"
         />
         <TextField
           label="Services (comma separated)"
           value={clinicServices}
           onChange={(e) => setClinicServices(e.target.value)}
           required
-          style={{ margin: '10px 0' }}
+          className="inputField"
         />
         <input
           type="file"
           accept="image/*"
           onChange={handleImageChange}
-          style={{ margin: '10px 0' }}
+          className="fileInput"
         />
-        <Button onClick={addClinic}>Add Clinic</Button>
+        <Button onClick={addClinic} className="submitButton">Add Clinic</Button>
       </form>
-      <ul>
+      <ul className="clinicList">
         {clinics?.map((clinic) => (
-          <li key={clinic._id}>
-            <div>{clinic.name}</div>
-            <div>{clinic.description}</div>
-            <div>{clinic.services.join(', ')}</div> {/* Display services */}
-            <div>
-              <img src={`http://localhost:5000/uploads/${clinic.image}`} alt={clinic.name} style={{ maxWidth: '200px' }} />
+          <li key={clinic._id} className="clinicItem">
+            
+            <div className="clinicName">{clinic.name}</div>
+            <div className="clinicDescription">{clinic.description}</div>
+            <div className="clinicServices">{clinic.services.join(', ')}</div> {/* Display services */}
+            <div className="clinicImageContainer">
+              <img
+                src={`http://localhost:5000/uploads/${clinic.image}`}
+                alt={clinic.name}
+                className="clinicImage"
+              />
             </div>
           </li>
         ))}
       </ul>
+
+      <style jsx>{`
+        .container {
+          max-width: 800px;
+          margin: 20px auto;
+          padding: 20px;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          background-color: #f9f9f9;
+        }
+        .title {
+          font-size: 24px;
+          text-align: center;
+          margin-bottom: 20px;
+          color: #333;
+        }
+        .inputField {
+          width: 100%;
+          margin-bottom: 15px;
+        }
+        .fileInput {
+          margin-bottom: 15px;
+        }
+        .submitButton {
+          display: block;
+          margin: 20px auto;
+          padding: 10px 20px;
+          background-color: #007bff;
+          color: #fff;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+        .clinicList {
+          list-style-type: none;
+          padding: 0;
+        }
+        .clinicItem {
+          margin-bottom: 20px;
+          padding: 15px;
+          background-color: #fff;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+        }
+        .clinicName {
+          font-size: 20px;
+          font-weight: bold;
+          margin-bottom: 10px;
+          color: #333;
+        }
+        .clinicDescription {
+          margin-bottom: 10px;
+          color: #555;
+        }
+        .clinicServices {
+          margin-bottom: 10px;
+          color: #777;
+        }
+        .clinicImageContainer {
+          text-align: center;
+        }
+        .clinicImage {
+          max-width: 100%;
+          height: auto;
+          border-radius: 8px;
+        }
+      `}</style>
     </div>
   );
 };
