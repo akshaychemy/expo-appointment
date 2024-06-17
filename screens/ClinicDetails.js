@@ -57,7 +57,7 @@ export default function ClinicDetails({ route, navigation }) {
 
       <Text style={styles.sectionTitle}>Services Offered</Text>
       <View style={styles.servicesContainer}>
-        {clinic.services.map((service, index) => (
+        {clinic?.services?.map((service, index) => (
           <TouchableOpacity
             key={index}
             style={[

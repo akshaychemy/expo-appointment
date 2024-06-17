@@ -13,7 +13,7 @@ const ClinicsPage = () => {
   useEffect(() => {
     const fetchClinics = async () => {
       try {
-        const response = await axios.get('/api/clinics', {
+        const response = await axios.get('http://localhost:5000/api/clinics', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
@@ -87,15 +87,15 @@ const ClinicsPage = () => {
         <Button onClick={addClinic}>Add Clinic</Button>
       </form>
       <ul>
-        {/* {clinics?.map((clinic) => (
+        {clinics?.map((clinic) => (
           <li key={clinic._id}>
             <div>{clinic.name}</div>
             <div>{clinic.description}</div>
             <div>
-              <img src={clinic.image} alt={clinic.name} style={{ maxWidth: '200px' }} />
+              <img src={`http://localhost:5000/uploads/ ${clinic.image}`} alt={clinic.name} style={{ maxWidth: '200px' }} />
             </div>
           </li>
-        ))} */}
+        ))}
       </ul>
     </div>
   );

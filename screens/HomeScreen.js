@@ -14,6 +14,7 @@ export default function HomeScreen({ navigation }) {
     try {
       const data = await getClinics();
       setClinics(data);
+      console.log("setClinics",data)
     } catch (error) {
       console.error('Error fetching clinics:', error);
     }
