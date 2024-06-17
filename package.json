@@ -23,5 +23,16 @@
   "devDependencies": {
     "@babel/core": "^7.20.0"
   },
-  "private": true
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akshaychemy/expo-appointment.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/akshaychemy/expo-appointment/issues"
+  },
+  "homepage": "https://github.com/akshaychemy/expo-appointment#readme",
+  "description": ""
 }

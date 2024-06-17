@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { useAuth } from '../context/AuthContext';
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const { login } = useAuth();
 
   const handleLogin = () => {
-    // Handle login logic here
-    navigation.navigate('Home');
+    // In a real app, you should validate the username and password
+    if (username && password) {
+      login(username);
+      navigation.replace('Appointment');
+    } else {
+      alert('Please enter your username and password');
+    }
   };
 
   return (
@@ -15,9 +22,9 @@ export default function LoginScreen({ navigation }) {
       <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
       />
       <TextInput
         style={styles.input}
@@ -27,9 +34,6 @@ export default function LoginScreen({ navigation }) {
         onChangeText={setPassword}
       />
       <Button title="Login" onPress={handleLogin} />
-      <Text style={styles.registerText} onPress={() => navigation.navigate('Register')}>
-        Don't have an account? Register
-      </Text>
     </View>
   );
 }
@@ -51,10 +55,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 20,
     padding: 10,
-  },
-  registerText: {
-    marginTop: 20,
-    textAlign: 'center',
-    color: 'blue',
   },
 });

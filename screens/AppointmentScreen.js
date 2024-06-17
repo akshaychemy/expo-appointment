@@ -1,17 +1,36 @@
-import React, { useState } from 'react';
-import { View, Text, Button, TextInput, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Button, TextInput, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useAuth } from '../context/AuthContext';
 
-export default function AppointmentScreen({ navigation }) {
+const timeSlots = [
+  '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
+  '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM'
+];
+
+export default function AppointmentScreen({ route, navigation }) {
+  const { clinic, doctor } = route.params;
+  const { user } = useAuth();
   const [name, setName] = useState('');
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
+  const [dateSelected, setDateSelected] = useState(false);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
+
+//   useEffect(() => {
+//     if (!user) {
+//       navigation.replace('Login');
+//     }
+//   }, [user, navigation]);
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(false);
     setDate(currentDate);
+    if (mode === 'date') {
+      setDateSelected(true);
+    }
   };
 
   const showMode = (currentMode) => {
@@ -27,8 +46,19 @@ export default function AppointmentScreen({ navigation }) {
     showMode('time');
   };
 
+  const handleConfirmAppointment = () => {
+    if (name && dateSelected && selectedTimeSlot) {
+      alert(`Appointment confirmed for ${name} with ${doctor} at ${clinic} on ${date.toDateString()} at ${selectedTimeSlot}`);
+      navigation.goBack();
+    } else {
+      alert('Please enter your name, select a date, and choose a time slot.');
+    }
+  };
+
   return (
     <View style={styles.container}>
+      <Text>Clinic: {clinic}</Text>
+      <Text>Doctor: {doctor}</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter your name"
@@ -37,9 +67,6 @@ export default function AppointmentScreen({ navigation }) {
       />
       <View>
         <Button onPress={showDatepicker} title="Select date" />
-      </View>
-      <View>
-        <Button onPress={showTimepicker} title="Select time" />
       </View>
       {show && (
         <DateTimePicker
@@ -51,15 +78,29 @@ export default function AppointmentScreen({ navigation }) {
           onChange={onChange}
         />
       )}
+      {dateSelected && (
+        <>
+          <Text style={styles.title}>Select Time Slot</Text>
+          <FlatList
+            data={timeSlots}
+            numColumns={2}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={[styles.slot, selectedTimeSlot === item && styles.selectedSlot]}
+                onPress={() => setSelectedTimeSlot(item)}
+              >
+                <Text style={styles.slotText}>{item}</Text>
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item) => item}
+          />
+        </>
+      )}
       <Text>Selected Date: {date.toDateString()}</Text>
-      <Text>Selected Time: {date.toLocaleTimeString()}</Text>
+      <Text>Selected Time: {selectedTimeSlot}</Text>
       <Button
         title="Confirm Appointment"
-        onPress={() => {
-          // Handle appointment confirmation logic
-          alert(`Appointment confirmed for ${name} on ${date}`);
-          navigation.goBack();
-        }}
+        onPress={handleConfirmAppointment}
       />
     </View>
   );
@@ -77,5 +118,25 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 20,
     padding: 10,
+  },
+  title: {
+    fontSize: 24,
+    marginVertical: 10,
+    textAlign: 'center',
+  },
+  slot: {
+    padding: 15,
+    margin: 5,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 5,
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  selectedSlot: {
+    backgroundColor: 'blue',
+  },
+  slotText: {
+    color: 'black',
   },
 });
