@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Button, TextInput, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Button, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useAuth } from '../context/AuthContext';
 
@@ -12,6 +12,7 @@ export default function AppointmentScreen({ route, navigation }) {
   const { clinic, selectedService, selectedDoctor } = route.params;
   const { user } = useAuth();
   const [name, setName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
@@ -47,105 +48,186 @@ export default function AppointmentScreen({ route, navigation }) {
       return;
     }
 
-    if (name && dateSelected && selectedTimeSlot) {
+    if (!name.trim() || !phoneNumber.trim()) {
+      alert('Please enter your name and phone number to proceed.');
+      return;
+    }
+
+    if (!validatePhoneNumber(phoneNumber)) {
+      alert('Please enter a valid phone number.');
+      return;
+    }
+
+    if (dateSelected && selectedTimeSlot) {
       const appointmentDetails = {
         name,
+        phoneNumber,
         clinic: clinic.name,
         selectedService,
         selectedDoctor: selectedDoctor.name,
         date: date.toDateString(),
         timeSlot: selectedTimeSlot
       };
-      alert(`Appointment confirmed for ${appointmentDetails.name} with Dr. ${appointmentDetails.selectedDoctor} at ${appointmentDetails.clinic} for ${appointmentDetails.selectedService} on ${appointmentDetails.date} at ${appointmentDetails.timeSlot}`);
+      alert(`Appointment confirmed for ${appointmentDetails.name} with Dr. ${appointmentDetails.selectedDoctor} at ${appointmentDetails.clinic} for ${appointmentDetails.selectedService} on ${appointmentDetails.date} at ${appointmentDetails.timeSlot}. Contact: ${appointmentDetails.phoneNumber}`);
       navigation.goBack();
     } else {
-      alert('Please enter your name, select a date, and choose a time slot.');
+      alert('Please select a date and choose a time slot.');
     }
   };
 
+  const validatePhoneNumber = (phoneNumber) => {
+    // Simple phone number validation: check if it's numeric and 10 digits long
+    return /^\d{10}$/.test(phoneNumber);
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Clinic: {clinic.name}</Text>
-      <Text>Service: {selectedService}</Text>
-      <Text>Doctor: {selectedDoctor.name}</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.headerText}>Appointment Details</Text>
+      <View style={styles.detailContainer}>
+        <Text style={styles.detailText}>Clinic: {clinic.name}</Text>
+        <Text style={styles.detailText}>Service: {selectedService}</Text>
+        <Text style={styles.detailText}>Doctor: {selectedDoctor.name}</Text>
+      </View>
+      
       <TextInput
         style={styles.input}
         placeholder="Enter your name"
         value={name}
         onChangeText={setName}
       />
-      <View>
-        <Button onPress={showDatepicker} title="Select date" />
+      
+      <TextInput
+        style={styles.input}
+        placeholder="Enter your phone number"
+        keyboardType="phone-pad"
+        value={phoneNumber}
+        onChangeText={setPhoneNumber}
+      />
+      
+      <View style={styles.dateTimeContainer}>
+        <View style={styles.dateTimeButton}>
+          <Button onPress={showDatepicker} title="Select date" />
+        </View>
+        {show && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={date}
+            mode={mode}
+            is24Hour={true}
+            display="default"
+            onChange={onChange}
+          />
+        )}
       </View>
-      {show && (
-        <DateTimePicker
-          testID="dateTimePicker"
-          value={date}
-          mode={mode}
-          is24Hour={true}
-          display="default"
-          onChange={onChange}
-        />
-      )}
+      
       {dateSelected && (
         <>
           <Text style={styles.title}>Select Time Slot</Text>
-          <FlatList
-            data={timeSlots}
-            numColumns={2}
-            renderItem={({ item }) => (
+          <View style={styles.timeSlotsContainer}>
+            {timeSlots.map(slot => (
               <TouchableOpacity
-                style={[styles.slot, selectedTimeSlot === item && styles.selectedSlot]}
-                onPress={() => setSelectedTimeSlot(item)}
+                key={slot}
+                style={[styles.slot, selectedTimeSlot === slot && styles.selectedSlot]}
+                onPress={() => setSelectedTimeSlot(slot)}
               >
-                <Text style={styles.slotText}>{item}</Text>
+                <Text style={styles.slotText}>{slot}</Text>
               </TouchableOpacity>
-            )}
-            keyExtractor={(item) => item}
-          />
+            ))}
+          </View>
         </>
       )}
-      <Text>Selected Date: {date.toDateString()}</Text>
-      <Text>Selected Time: {selectedTimeSlot}</Text>
-      <Button
-        title="Confirm Appointment"
-        onPress={handleConfirmAppointment}
-      />
-    </View>
+      
+      <View style={styles.dateTimeContainer}>
+        <Text style={styles.dateTimeText}>Selected Date: {date.toDateString()}</Text>
+        <Text style={styles.dateTimeText}>Selected Time: {selectedTimeSlot}</Text>
+      </View>
+      
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Confirm Appointment"
+          onPress={handleConfirmAppointment}
+          disabled={!name || !phoneNumber || !dateSelected || !selectedTimeSlot}
+        />
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  detailContainer: {
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 10,
+    borderRadius: 5,
+  },
+  detailText: {
+    fontSize: 16,
+    marginBottom: 5,
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: '#ccc',
     borderWidth: 1,
     marginBottom: 20,
-    padding: 10,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  dateTimeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  dateTimeButton: {
+    flex: 1,
+    marginRight: 10,
+  },
+  dateTimeText: {
+    fontSize: 16,
+    marginBottom: 10,
   },
   title: {
-    fontSize: 24,
-    marginVertical: 10,
+    fontSize: 20,
+    fontWeight: 'bold',
     textAlign: 'center',
+    marginBottom: 10,
+  },
+  timeSlotsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
   },
   slot: {
-    padding: 15,
+    paddingVertical: 12, // Adjusted padding for better touch area
+    paddingHorizontal: 20,
     margin: 5,
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: '#ccc',
     borderRadius: 5,
     alignItems: 'center',
     backgroundColor: 'white',
+    width: '45%', // Adjusted width for two items per row
   },
   selectedSlot: {
     backgroundColor: 'blue',
   },
   slotText: {
-    color: 'black',
+    fontSize: 16,
+  },
+  buttonContainer: {
+    marginTop: 20,
   },
 });

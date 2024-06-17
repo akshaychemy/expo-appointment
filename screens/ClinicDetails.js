@@ -98,12 +98,13 @@ export default function ClinicDetails({ route }) {
         <>
           <Text style={styles.sectionTitle}>Select Doctor</Text>
           <View style={styles.doctorContainer}>
-            {doctors[clinic.name].map(doctor => (
+            {doctors[clinic.name].map((doctor, index) => (
               <TouchableOpacity
                 key={doctor.id}
                 style={[
                   styles.item,
                   selectedDoctor === doctor && styles.selectedItem,
+                  index % 2 !== 0 && { marginLeft: 10 }, // Ensure two items per row
                 ]}
                 onPress={() => selectDoctor(doctor)}
               >
@@ -153,13 +154,12 @@ const styles = StyleSheet.create({
   item: {
     alignItems: 'center',
     padding: 20,
-    margin: 10,
+    marginVertical: 10,
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 10,
     backgroundColor: 'white',
-    minWidth: 150,
-    maxWidth: '45%',
+    width: '45%', // Two items per row
   },
   selectedItem: {
     backgroundColor: 'lightblue',
