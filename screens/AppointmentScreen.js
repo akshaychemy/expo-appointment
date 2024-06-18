@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Button, TextInput, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-// import { bookAppointment } from './api'; // Import the API call
-import { getClinics ,getDoctors,bookAppointment} from '../src/api';
-
+import { bookAppointment } from '../src/api'; // Assuming bookAppointment function is imported correctly
 
 export default function AppointmentScreen({ route, navigation }) {
   const { clinic, selectedService, selectedDoctor } = route.params;
@@ -59,7 +57,6 @@ export default function AppointmentScreen({ route, navigation }) {
     };
 
     try {
-      console.log("appointmentData",appointmentData)
       await bookAppointment(appointmentData);
       alert(`Appointment confirmed for ${name} with Dr. ${selectedDoctor.name} at ${clinic.name} for ${selectedService} on ${date.toDateString()} at ${selectedTimeSlot}`);
       navigation.goBack();
@@ -71,9 +68,9 @@ export default function AppointmentScreen({ route, navigation }) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text>Clinic: {clinic.name}</Text>
-      <Text>Service: {selectedService}</Text>
-      <Text>Doctor: {selectedDoctor.name}</Text>
+      <Text style={styles.text}>Clinic: {clinic.name}</Text>
+      <Text style={styles.text}>Service: {selectedService}</Text>
+      <Text style={styles.text}>Doctor: {selectedDoctor.name}</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter your name"
@@ -85,8 +82,9 @@ export default function AppointmentScreen({ route, navigation }) {
         placeholder="Enter your phone number"
         value={phoneNumber}
         onChangeText={setPhoneNumber}
+        keyboardType="phone-pad"
       />
-      <View>
+      <View style={styles.buttonContainer}>
         <Button onPress={showDatepicker} title="Select date" />
       </View>
       {show && (
@@ -115,12 +113,14 @@ export default function AppointmentScreen({ route, navigation }) {
           </View>
         </>
       )}
-      <Text>Selected Date: {date.toDateString()}</Text>
-      <Text>Selected Time: {selectedTimeSlot}</Text>
-      <Button
-        title="Confirm Appointment"
-        onPress={handleConfirmAppointment}
-      />
+      <Text style={styles.text}>Selected Date: {date.toDateString()}</Text>
+      <Text style={styles.text}>Selected Time: {selectedTimeSlot}</Text>
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Confirm Appointment"
+          onPress={handleConfirmAppointment}
+        />
+      </View>
     </ScrollView>
   );
 }
@@ -129,37 +129,52 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
+    backgroundColor: '#ffffff',
+  },
+  text: {
+    fontSize: 16,
+    marginBottom: 10,
+    color: '#333333',
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: '#cccccc',
     borderWidth: 1,
     marginBottom: 20,
-    padding: 10,
+    paddingHorizontal: 10,
+    fontSize: 16,
+  },
+  buttonContainer: {
+    marginVertical: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     marginVertical: 10,
     textAlign: 'center',
+    color: '#333333',
   },
   timeSlotContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
+    marginBottom: 20,
   },
   slot: {
-    padding: 15,
+    paddingVertical: 15,
+    paddingHorizontal: 20,
     margin: 5,
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: '#cccccc',
     borderRadius: 5,
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: '#ffffff',
   },
   selectedSlot: {
-    backgroundColor: 'lightblue',
+    backgroundColor: '#007bff',
+    borderColor: '#007bff',
   },
   slotText: {
-    color: 'black',
+    fontSize: 16,
+    color: '#333333',
   },
 });

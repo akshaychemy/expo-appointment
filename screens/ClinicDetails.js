@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, Button, Alert } from 'react-native';
-import { getClinics ,getDoctors} from '../src/api';
-
+import { getClinics, getDoctors } from '../src/api';
 
 export default function ClinicDetails({ route, navigation }) {
   const { clinic } = route.params;
@@ -16,8 +15,7 @@ export default function ClinicDetails({ route, navigation }) {
   const fetchDoctors = async () => {
     try {
       const data = await getDoctors();
-       console.log("data==",data)
-      const filteredDoctors = data.filter(doctor => doctor.clinic._id === clinic._id);
+      const filteredDoctors = data.filter((doctor) => doctor.clinic._id === clinic._id);
       setDoctors(filteredDoctors);
     } catch (error) {
       console.error('Error fetching doctors:', error);
@@ -54,6 +52,7 @@ export default function ClinicDetails({ route, navigation }) {
       <View style={styles.clinicHeader}>
         <Image source={{ uri: `http://10.0.2.2:5000/uploads/${clinic.image}` }} style={styles.image} />
         <Text style={styles.title}>{clinic.name}</Text>
+        <Text style={styles.titledesc}>{clinic.description}</Text>
       </View>
 
       <Text style={styles.sectionTitle}>Services Offered</Text>
@@ -76,7 +75,7 @@ export default function ClinicDetails({ route, navigation }) {
         <>
           <Text style={styles.sectionTitle}>Select Doctor</Text>
           <View style={styles.doctorContainer}>
-            {doctors.map(doctor => (
+            {doctors.map((doctor) => (
               <TouchableOpacity
                 key={doctor._id}
                 style={[
@@ -116,6 +115,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 10,
   },
+  titledesc: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginVertical: 10,
+  },
   sectionTitle: {
     fontSize: 20,
     marginVertical: 10,
@@ -131,7 +135,7 @@ const styles = StyleSheet.create({
   item: {
     alignItems: 'center',
     padding: 20,
-    margin: 10,
+    marginVertical: 10,
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 10,
@@ -149,7 +153,7 @@ const styles = StyleSheet.create({
   serviceItem: {
     paddingVertical: 10,
     paddingHorizontal: 20,
-    margin: 5,
+    marginVertical: 5,
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 5,
@@ -169,4 +173,3 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
-
