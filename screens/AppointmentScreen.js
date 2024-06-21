@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, Button, TextInput, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Button, TextInput, ScrollView, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { bookAppointment } from '../src/api'; // Assuming bookAppointment function is imported correctly
+
+const { width, height } = Dimensions.get('window');
 
 export default function AppointmentScreen({ route, navigation }) {
   const { clinic, selectedService, selectedDoctor } = route.params;
@@ -128,28 +130,30 @@ export default function AppointmentScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 20,
+    padding: width * 0.05,
     backgroundColor: '#ffffff',
+    minHeight: height,
   },
   text: {
-    fontSize: 16,
-    marginBottom: 10,
+    fontSize: width * 0.04,
+    marginBottom: height * 0.01,
     color: '#333333',
   },
   input: {
-    height: 40,
+    height: height * 0.05,
     borderColor: '#cccccc',
     borderWidth: 1,
-    marginBottom: 20,
-    paddingHorizontal: 10,
-    fontSize: 16,
+    marginBottom: height * 0.02,
+    paddingHorizontal: width * 0.025,
+    fontSize: width * 0.04,
+    width: width * 0.9,
   },
   buttonContainer: {
-    marginVertical: 10,
+    marginVertical: height * 0.01,
   },
   title: {
-    fontSize: 20,
-    marginVertical: 10,
+    fontSize: width * 0.05,
+    marginVertical: height * 0.01,
     textAlign: 'center',
     color: '#333333',
   },
@@ -157,24 +161,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
-    marginBottom: 20,
+    marginBottom: height * 0.02,
   },
   slot: {
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    margin: 5,
+    paddingVertical: height * 0.02,
+    paddingHorizontal: width * 0.05,
+    margin: width * 0.01,
     borderWidth: 1,
     borderColor: '#cccccc',
-    borderRadius: 5,
+    borderRadius: width * 0.01,
     alignItems: 'center',
     backgroundColor: '#ffffff',
+    width: width * 0.4,
   },
   selectedSlot: {
     backgroundColor: '#007bff',
     borderColor: '#007bff',
   },
   slotText: {
-    fontSize: 16,
+    fontSize: width * 0.04,
     color: '#333333',
   },
 });

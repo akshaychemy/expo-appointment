@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, Button, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, Button, Alert, Dimensions } from 'react-native';
 import { getClinics, getDoctors } from '../src/api';
+
+const { width, height } = Dimensions.get('window');
 
 export default function ClinicDetails({ route, navigation }) {
   const { clinic } = route.params;
@@ -104,28 +106,28 @@ export default function ClinicDetails({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 20,
+    padding: width * 0.05,
   },
   clinicHeader: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: height * 0.02,
   },
   title: {
-    fontSize: 24,
+    fontSize: width * 0.06,
     textAlign: 'center',
-    marginVertical: 10,
+    marginVertical: height * 0.01,
   },
   titledesc: {
-    fontSize: 16,
+    fontSize: width * 0.04,
     textAlign: 'center',
-    marginVertical: 10,
+    marginVertical: height * 0.01,
   },
   sectionTitle: {
-    fontSize: 20,
-    marginVertical: 10,
+    fontSize: width * 0.05,
+    marginVertical: height * 0.01,
   },
   servicesContainer: {
-    marginBottom: 20,
+    marginBottom: height * 0.02,
   },
   doctorContainer: {
     flexDirection: 'row',
@@ -134,42 +136,43 @@ const styles = StyleSheet.create({
   },
   item: {
     alignItems: 'center',
-    padding: 20,
-    marginVertical: 10,
+    padding: width * 0.05,
+    marginVertical: height * 0.01,
     borderWidth: 1,
     borderColor: 'gray',
-    borderRadius: 10,
+    borderRadius: width * 0.02,
     backgroundColor: 'white',
-    minWidth: 150,
+    minWidth: width * 0.4,
     maxWidth: '45%',
   },
   selectedItem: {
     backgroundColor: 'lightblue',
   },
   itemText: {
-    marginTop: 10,
+    marginTop: height * 0.01,
     textAlign: 'center',
+    fontSize: width * 0.04,
   },
   serviceItem: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginVertical: 5,
+    paddingVertical: height * 0.02,
+    paddingHorizontal: width * 0.05,
+    marginVertical: height * 0.01,
     borderWidth: 1,
     borderColor: 'gray',
-    borderRadius: 5,
+    borderRadius: width * 0.02,
     backgroundColor: 'white',
   },
   selectedServiceItem: {
     backgroundColor: 'lightblue',
   },
   serviceText: {
-    fontSize: 16,
+    fontSize: width * 0.04,
     textAlign: 'left',
   },
   image: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 10,
+    width: width * 0.25,
+    height: width * 0.25,
+    borderRadius: width * 0.125,
+    marginBottom: height * 0.01,
   },
 });

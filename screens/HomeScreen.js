@@ -7,9 +7,12 @@ import {
   Image,
   ScrollView,
   FlatList,
+  Dimensions,
 } from "react-native";
 
 import { getClinics } from "../src/api";
+
+const { width, height } = Dimensions.get("window");
 
 const images = [
   { id: "1", url: "https://picsum.photos/200/300" },
@@ -99,26 +102,26 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 20,
+    padding: width * 0.05,
     backgroundColor: "#f5f5f5",
   },
   carouselTitle: {
-    fontSize: 20,
+    fontSize: width * 0.05,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: height * 0.02,
   },
   carouselContainer: {
-    marginBottom: 20,
-    height: 200,
+    marginBottom: height * 0.02,
+    height: height * 0.3,
   },
   imageItem: {
-    width: 300, // Adjust width to display all images
-    marginRight: 10,
+    width: width * 0.8, // Adjust width to display all images
+    marginRight: width * 0.02,
   },
   title: {
-    fontSize: 24,
+    fontSize: width * 0.06,
     textAlign: "center",
-    marginVertical: 10,
+    marginVertical: height * 0.02,
     fontWeight: "bold",
     color: "#333",
   },
@@ -130,31 +133,30 @@ const styles = StyleSheet.create({
   clinicItem: {
     alignItems: "center",
     justifyContent: "center",
-    padding: 15,
-    marginHorizontal: 5,
+    padding: width * 0.05,
+    marginHorizontal: width * 0.02,
     borderWidth: 1,
     borderColor: "gray",
-    borderRadius: 10,
+    borderRadius: width * 0.02,
     backgroundColor: "white",
-    width: 150,
-    height: 200,
+    width: width * 0.4,
+    height: height * 0.25,
   },
   itemText: {
-    marginTop: 10,
+    marginTop: height * 0.01,
     textAlign: "center",
-    fontSize: 16,
+    fontSize: width * 0.04,
     color: "#333",
   },
   image: {
     width: "100%",
     height: "100%",
-    borderRadius: 10,
+    borderRadius: width * 0.02,
   },
   imageClinic: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 10,
+    width: width * 0.25,
+    height: width * 0.25,
+    borderRadius: width * 0.125,
+    marginBottom: height * 0.01,
   },
-  //
 });
