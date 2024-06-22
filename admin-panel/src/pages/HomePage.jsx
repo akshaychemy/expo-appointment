@@ -33,15 +33,15 @@ const HomePage = () => {
                 src={`http://localhost:5000/uploads/${appointment.clinic.image}`}
                 alt={appointment.selectedDoctor.name}
               /> */}
-              <h3 className="clinicName">{appointment.clinic.name}</h3>
+              <h3 className="clinicName">{appointment.clinic?.name}</h3>
               <p className="info">Date: {appointment.date}</p>
               <p className="info">Time Slot: {appointment.timeSlot}</p>
             </div>
             <div className="doctorInfo">
               <img
                 className="doctorImage"
-                src={`http://localhost:5000/uploads/${appointment.selectedDoctor.image}`}
-                alt={appointment.selectedDoctor.name}
+                src={`http://localhost:5000/uploads/${appointment?.selectedDoctor?.image}`}
+                alt={appointment?.selectedDoctor?.name}
               />
               <p className="info">Doctor: {appointment?.selectedDoctor?.name}</p>
               <p className="info">Services: {appointment?.selectedService}</p>

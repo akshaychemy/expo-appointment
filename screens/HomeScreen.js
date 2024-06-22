@@ -14,10 +14,16 @@ import { getClinics } from "../src/api";
 
 const { width, height } = Dimensions.get("window");
 
+//images
+// import DefaultImage from '../assets/';
+import image1 from '../assets/1.png';
+import image2 from '../assets/2.png';
+import image3 from '../assets/3.png';
+
 const images = [
-  { id: "1", url: "https://picsum.photos/200/300" },
-  { id: "2", url: "https://picsum.photos/200/300" },
-  { id: "3", url: "https://picsum.photos/200/300" },
+  { id: "1", url: Image.resolveAssetSource(image1).uri },
+  { id: "2", url: Image.resolveAssetSource(image2).uri },
+  { id: "3", url: Image.resolveAssetSource(image3).uri },
 ];
 
 export default function HomeScreen({ navigation }) {
